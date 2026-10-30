@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="km" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ធាតុទាំង ៥ នៃអក្ខរកម្មប្រព័ន្ធផ្សព្វផ្សាយ និងព័ត៌មាន</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        },
+                        accent: {
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                        }
+                    },
+                    fontFamily: {
+                        khmer: ['Kantumruy Pro', 'Battambang', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts: Kantumruy Pro & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Kantumruy+Pro:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Kantumruy Pro', 'Inter', sans-serif;
+            user-select: none;
+        }
+
+        /* Slide Transition Animations */
+        .slide {
+            display: none;
+            opacity: 0;
+            transform: scale(0.97) translateY(10px);
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        /* Custom Scrollbar for slide content overflow */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background-color: rgba(156, 163, 175, 0.4);
+            border-radius: 20px;
+        }
+
+        /* Glassmorphism background */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .dark .glass-panel {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col justify-between overflow-hidden transition-colors duration-300">
+
+    <!-- Top Navigation Header -->
+    <header class="w-full px-6 py-4 flex items-center justify-between z-30 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+                <i class="fa-solid fa-book-open text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-base md:text-lg font-bold leading-tight text-slate-900 dark:text-white">អក្ខរកម្មឌីជីថល</h1>
+                <p class="text-xs text-slate-500 dark:text-slate-400">ប្រព័ន្ធផ្សព្វផ្សាយ និងព័ត៌មាន (MIL)</p>
+            </div>
+        </div>
+
+        <!-- Center Slide Indicator -->
+        <div class="hidden md:flex items-center space-x-2 bg-slate-200/60 dark:bg-slate-800/60 px-4 py-1.5 rounded-full text-xs font-semibold">
+            <span id="current-slide-badge" class="text-indigo-600 dark:text-indigo-400">01</span>
+            <span class="text-slate-400">/</span>
+            <span id="total-slides-badge">06</span>
+        </div>
+
+        <!-- Right Tools -->
+        <div class="flex items-center space-x-2">
+            <!-- Table of Contents Toggle -->
+            <button id="toc-btn" class="p-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition" title="មាតិកាស្លាយ">
+                <i class="fa-solid fa-list-ul text-lg"></i>
+            </button>
+
+            <!-- Dark/Light Theme Toggle -->
+            <button id="theme-toggle" class="p-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition" title="ផ្លាស់ប្តូរ Theme">
+                <i id="theme-icon" class="fa-solid fa-moon text-lg"></i>
+            </button>
+
+            <!-- Fullscreen Button -->
+            <button id="fullscreen-btn" class="p-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition hidden sm:inline-flex" title="ពេញអេក្រង់">
+                <i class="fa-solid fa-expand text-lg"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Presentation Workspace -->
+    <main class="relative flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 md:p-8 flex items-center justify-center overflow-hidden">
+
+        <!-- SLIDE 1: OVERVIEW / TITLE -->
+        <section class="slide active flex-col justify-center items-center text-center w-full max-w-4xl mx-auto h-full my-auto py-6">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 text-sm font-medium mb-6 animate-pulse">
+                <i class="fa-solid fa-graduation-cap"></i> មេរៀនទី ១ • ថ្នាក់សិក្សាអក្ខរកម្ម
+            </div>
+            
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white leading-tight mb-6">
+                ធាតុទាំង ៥ នៃអក្ខរកម្មឌីជីថល<br/>
+                <span class="bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 bg-clip-text text-transparent">
+                    ប្រព័ន្ធផ្សព្វផ្សាយ និងព័ត៌មាន
+                </span>
+            </h1>
+            
+            <p class="text-slate-600 dark:text-slate-300 text-base sm:text-lg max-w-2xl leading-relaxed mb-10">
+                ការយល់ដឹងអំពីសមត្ថភាពសំខាន់ៗទាំង ៥ ដែលជួយឱ្យបុគ្គលគ្រប់រូបអាចប្រើប្រាស់ វិភាគ បង្កើត ឆ្លុះបញ្ចាំង និងចូលរួមក្នុងពិភពឌីជីថលប្រកបដោយប្រសិទ្ធភាព និងទំនួលខុសត្រូវ។
+            </p>
+
+            <!-- 5 Core Elements Grid Preview -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 w-full max-w-3xl mb-8">
+                <div class="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col items-center">
+                    <span class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-sm mb-2">១</span>
+                    <span class="text-xs font-semibold">ការចេះប្រើប្រាស់</span>
+                </div>
+                <div class="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col items-center">
+                    <span class="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-sm mb-2">២</span>
+                    <span class="text-xs font-semibold">ការវិភាគ</span>
+                </div>
+                <div class="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col items-center">
+                    <span class="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-sm mb-2">៣</span>
+                    <span class="text-xs font-semibold">ការបង្កើត</span>
+                </div>
+                <div class="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col items-center">
+                    <span class="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold text-sm mb-2">៤</span>
+                    <span class="text-xs font-semibold">ការឆ្លុះបញ្ចាំង</span>
+                </div>
+                <div class="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col items-center col-span-2 sm:col-span-1">
+                    <span class="w-8 h-8 rounded-full bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold text-sm mb-2">៥</span>
+                    <span class="text-xs font-semibold">ការចូលរួម</span>
+                </div>
+            </div>
+
+            <button onclick="changeSlide(1)" class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-lg shadow-indigo-600/30 transition flex items-center gap-2 group">
+                <span>ចាប់ផ្តើមសិក្សា</span>
+                <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+            </button>
+        </section>
+
+        <!-- SLIDE 2: 1- ការចេះប្រើប្រាស់ (USE / ACCESS) -->
+        <section class="slide flex-col w-full h-full my-auto custom-scroll overflow-y-auto max-h-[80vh] p-2">
+            <div class="mb-6 flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-blue-500/20">១</span>
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">ធាតុទី ១</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">ការចេះប្រើប្រាស់ (Access & Use)</h2>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Left Column: Core Concepts -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-blue-600 dark:text-blue-400 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-mobile-screen-button"></i> និយមន័យ និងជំហានដំបូង
+                        </h3>
+                        <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+                            <strong>ការចេះប្រើប្រាស់</strong> គឺជាជំហានដំបូងនៃអក្ខរកម្មឌីជីថល ប្រព័ន្ធផ្សព្វផ្សាយ និងព័ត៌មាន ដែលផ្ដោតលើការរៀនស្វែងរក និងយល់ដឹងអំពីសារលើប្រព័ន្ធផ្សព្វផ្សាយ និងវិធីប្រើប្រាស់បច្ចេកវិទ្យាប្រព័ន្ធផ្សព្វផ្សាយ។
+                        </p>
+                        <div class="bg-blue-50 dark:bg-blue-950/40 p-4 rounded-xl border border-blue-100 dark:border-blue-900/50 mb-4">
+                            <p class="text-xs sm:text-sm text-blue-900 dark:text-blue-200">
+                                <i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i>
+                                <strong>ឧទាហរណ៍៖</strong> នៅពេលក្មេងៗរៀនអាន ពួកគេរៀនកាន់សៀវភៅ និងបើកទំព័រ។ ពួកគេចាប់ផ្តើមស្គាល់ពាក្យ និងយល់ពីទំនាក់ទំនងរវាងពាក្យ និងរូបភាព។
+                            </p>
+                        </div>
+                    </div>
+                    <div class="border-t border-slate-100 dark:border-slate-800 pt-3 mt-2">
+                        <p class="text-xs text-slate-500">
+                            ជំនាញគន្លឹះ៖ ការស្វែងរក ស្គាល់ឧបករណ៍ និងចែករំលែកព័ត៌មានដែលត្រឹមត្រូវ។
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Right Column: Online Search via Computer -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass text-indigo-500"></i> ១.២- ស្វែងរកព័ត៌មានលើអ៊ីនធឺណិតតាមរយៈកុំព្យូទ័រ
+                    </h3>
+                    <ul class="space-y-3 text-sm text-slate-600 dark:text-slate-300">
+                        <li class="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+                            <i class="fa-solid fa-key text-blue-500 mt-1"></i>
+                            <span><strong>ពាក្យគន្លឹះ (Keywords)៖</strong> ត្រូវដឹងថាពាក្យគន្លឹះណាក្រុមត្រឹមត្រូវសម្រាប់បញ្ចូលទៅកាន់ម៉ាស៊ីនស្វែងរក (Search Engines)។</span>
+                        </li>
+                        <li class="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+                            <i class="fa-solid fa-shield-halved text-emerald-500 mt-1"></i>
+                            <span><strong>ប្រភពមានប្រៀប៖</strong> ត្រូវដឹងថាប្រភពអាសយដ្ឋានគេហទំព័រណាដែលមានទំនុកចិត្ត និងផ្តល់នូវទិន្នន័យពិតប្រាកដ។</span>
+                        </li>
+                        <li class="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+                            <i class="fa-solid fa-sliders text-purple-500 mt-1"></i>
+                            <span><strong>សមត្ថភាពក្នុងការសម្រេចចិត្ត៖</strong> ចេះត្រួតពិនិត្យ ជ្រើសរើស និងចែករំលែកព័ត៌មានដែលពាក់ព័ន្ធនឹងអ្វីដែលខ្លួនចង់រក។</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 3: ២- ការវិភាគ (ANALYZE) -->
+        <section class="slide flex-col w-full h-full my-auto custom-scroll overflow-y-auto max-h-[80vh] p-2">
+            <div class="mb-6 flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-emerald-500/20">២</span>
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">ធាតុទី ២</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">ការវិភាគ (Analyze)</h2>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm mb-6">
+                <div class="flex flex-col lg:flex-row gap-6 items-center">
+                    <div class="flex-1">
+                        <p class="text-slate-600 dark:text-slate-300 text-base leading-relaxed mb-4">
+                            <strong>ការចេះវិភាគព័ត៌មាន</strong> គឺជាជំហានទីពីរនៃអក្ខរកម្មប្រព័ន្ធផ្សព្វផ្សាយ។ បុគ្គលម្នាក់ដែលមានសមត្ថភាពវិភាគប្រព័ន្ធផ្សព្វផ្សាយ គឺមានសមត្ថភាពចេះបកស្រាយអត្ថន័យ វាយតម្លៃ ប្រភេទទម្រង់សារទាំងលើឯកសារបោះពុម្ព និងឌីជីថល (រូបភាព អត្ថបទ ព័ត៌មានវីដេអូ ភាពយន្ត វិទ្យុ អ៊ីនធឺណិត និងបណ្តាញសង្គម)។
+                        </p>
+                    </div>
+                    <!-- Illustration Icon Box -->
+                    <div class="w-full lg:w-48 h-32 bg-emerald-50 dark:bg-emerald-950/30 rounded-xl border border-emerald-200 dark:border-emerald-800 flex flex-col items-center justify-center text-emerald-600 dark:text-emerald-400">
+                        <i class="fa-solid fa-chart-pie text-4xl mb-2"></i>
+                        <span class="text-xs font-bold text-center px-2">២.១- ការវិភាគព័ត៌មានដែលទទួលបាន</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytical Questions Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <div class="text-emerald-500 font-bold mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-user-ninja"></i> អ្នកបង្កើតសារ
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                        តើនរណាជាអ្នកបង្កើតសារនេះ? តើគោលបំណងនៃការសរសេររបស់គាត់គឺអ្វី?
+                    </p>
+                </div>
+
+                <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <div class="text-emerald-500 font-bold mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-bullseye"></i> គោលដៅ និងគុណតម្លៃ
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                        តើសារនេះផ្ញើទៅកាន់នរណា? តើវាមានគុណតម្លៃ សេចក្តីទុកចិត្ត និងភាពជឿជាក់កម្រិតណា?
+                    </p>
+                </div>
+
+                <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 sm:col-span-2 md:col-span-1">
+                    <div class="text-emerald-500 font-bold mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-question"></i> ការចោទសំនួរ
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                        ការចោទសំនួរល្អៗ ដើម្បីលើកកម្ពស់ជំនាញគិតស៊ីជម្រៅ គឺជាគោលដៅចម្បងនៃការវិភាគ។
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 4: ៣- ការបង្កើត (CREATE) -->
+        <section class="slide flex-col w-full h-full my-auto custom-scroll overflow-y-auto max-h-[80vh] p-2">
+            <div class="mb-6 flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-amber-500/20">៣</span>
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">ធាតុទី ៣</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">ការបង្កើត (Create)</h2>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Main Description -->
+                <div class="md:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <h3 class="text-lg font-bold text-amber-600 dark:text-amber-400 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-nib"></i> ១.៤- ការបង្កើតព័ត៌មាននៅលើកុំព្យូទ័រ
+                    </h3>
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+                        <strong>ការបង្កើត</strong> គឺជាជំហានទីបីនៃអក្ខរកម្មប្រព័ន្ធផ្សព្វផ្សាយ និងព័ត៌មាន។ ការបង្កើតសារប្រព័ន្ធផ្សព្វផ្សាយពីមុន ត្រូវ បានប្រើប្រាស់ដោយប្រើតែក្រដាស និងខ្មៅដៃតែប៉ុណ្ណោះ។
+                    </p>
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+                        បច្ចុប្បន្ននេះ អ្នកអាចប្រើប្រាស់ឧបករណ៍ឌីជីថលដូចជា <strong>កុំព្យូទ័រ ឬទូរស័ព្ទ</strong> ដើម្បីរៀបចំបង្កើតជាអត្ថបទ សំឡេង តន្ត្រី វីដេអូ កម្មវិធីវិទ្យុ គេហទំព័រ គំរូប្លុក និងប្លុកតាមកុំព្យូទ័របានយ៉ាងងាយស្រួល។
+                    </p>
+                </div>
+
+                <!-- Digital Media Formats Card -->
+                <div class="bg-amber-50 dark:bg-amber-950/20 p-6 rounded-2xl border border-amber-200 dark:border-amber-900/40 flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-bold text-amber-900 dark:text-amber-200 mb-3 text-base">
+                            <i class="fa-solid fa-photo-film mr-1"></i> ទម្រង់ផលិតផលឌីជីថល
+                        </h4>
+                        <div class="grid grid-cols-2 gap-2 text-xs font-medium text-amber-800 dark:text-amber-300">
+                            <div class="p-2 bg-white/80 dark:bg-slate-900/80 rounded-lg flex items-center gap-2">
+                                <i class="fa-solid fa-file-lines text-amber-600"></i> អត្ថបទ
+                            </div>
+                            <div class="p-2 bg-white/80 dark:bg-slate-900/80 rounded-lg flex items-center gap-2">
+                                <i class="fa-solid fa-music text-amber-600"></i> សំឡេង/តន្ត្រី
+                            </div>
+                            <div class="p-2 bg-white/80 dark:bg-slate-900/80 rounded-lg flex items-center gap-2">
+                                <i class="fa-solid fa-video text-amber-600"></i> វីដេអូ
+                            </div>
+                            <div class="p-2 bg-white/80 dark:bg-slate-900/80 rounded-lg flex items-center gap-2">
+                                <i class="fa-solid fa-globe text-amber-600"></i> គេហទំព័រ/ប្លុក
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-amber-200 dark:border-amber-800/60 text-xs text-amber-700 dark:text-amber-400">
+                        គោលបំណង៖ ដើម្បីបញ្ចេញសាររបស់ខ្លួនទៅកាន់សាធារណជនទូលំទូលាយ។
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 5: ៤- ការឆ្លុះបញ្ចាំង (REFLECT) -->
+        <section class="slide flex-col w-full h-full my-auto custom-scroll overflow-y-auto max-h-[80vh] p-2">
+            <div class="mb-6 flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-purple-500/20">៤</span>
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">ធាតុទី ៤</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">ការឆ្លុះបញ្ចាំង (Reflect)</h2>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <h3 class="text-lg font-bold text-purple-600 dark:text-purple-400 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-mirror"></i> ១.៥- ការឆ្លុះបញ្ចាំង និងក្រមសីលធម៌
+                    </h3>
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed text-sm mb-3">
+                        <strong>ការឆ្លុះបញ្ចាំង</strong> គឺជាជំហានទីបួននៃអក្ខរកម្មប្រព័ន្ធផ្សព្វផ្សាយ និងព័ត៌មាន។ វាទាមទារឱ្យមានការគិតទូលំទូលាយ ជ្រាលជ្រៅ និងការពិចារណាអំពីព័ត៌មានប្រព័ន្ធផ្សព្វផ្សាយប្រចាំថ្ងៃ។
+                    </p>
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed text-sm">
+                        វាជាការស្វែងយល់អំពីឥទ្ធិពលនៃប្រព័ន្ធផ្សព្វផ្សាយ និងបច្ចេកវិទ្យាមកលើបុគ្គលម្នាក់ៗ ព្រមទាំងសង្គមទាំងមូល។
+                    </p>
+                </div>
+
+                <div class="bg-purple-50 dark:bg-purple-950/30 p-6 rounded-2xl border border-purple-200 dark:border-purple-900/50">
+                    <h4 class="font-bold text-purple-900 dark:text-purple-200 mb-3 text-base">
+                        <i class="fa-solid fa-scale-balanced mr-1"></i> សំនួរសម្រាប់ឆ្លុះបញ្ចាំងខ្លួនឯង
+                    </h4>
+                    <ul class="space-y-2 text-xs sm:text-sm text-purple-950 dark:text-purple-300">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-purple-600 mt-1"></i>
+                            <span>តើប្រព័ន្ធផ្សព្វផ្សាយប៉ះពាល់ដល់ឥរិយាបថ និងសកម្មភាពរបស់យើងយ៉ាងដូចម្តេច?</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-purple-600 mt-1"></i>
+                            <span>តើសារដែលយើងបង្កើត ឬចែករំលែក មានផលប៉ះពាល់អ្វីខ្លះដល់អ្នកដទៃ?</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-purple-600 mt-1"></i>
+                            <span>តើត្រូវប្រកាន់ខ្ជាប់នូវក្រមសីលធម៌យ៉ាងដូចម្តេចក្នុងការប្រាស្រ័យទាក់ទង?</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 6: ៥- ការចូលរួម (ACT / PARTICIPATE) -->
+        <section class="slide flex-col w-full h-full my-auto custom-scroll overflow-y-auto max-h-[80vh] p-2">
+            <div class="mb-6 flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-rose-500/20">៥</span>
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">ធាតុទី ៥</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">ការចូលរួម (Act / Participate)</h2>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm mb-6">
+                <h3 class="text-lg font-bold text-rose-600 dark:text-rose-400 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-users"></i> ១.៦- កិច្ចការចូលរួម និងពលរដ្ឋឌីជីថលសកម្ម
+                </h3>
+                <p class="text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base mb-4">
+                    <strong>ការចូលរួម</strong> គឺជាជំហានចុងក្រោយនៃអក្ខរកម្មប្រព័ន្ធផ្សព្វផ្សាយ និងព័ត៌មាន។ គោលបំណងគឺការចូលរួមសម្រេចចិត្តក្នុងការរស់នៅក្នុងសង្គម តាមរយៈការចែករំលែកចំណេះដឹង បញ្ចេញមតិយោបល់ ឬការដោះស្រាយបញ្ហានានាក្នុងសហគមន៍។
+                </p>
+
+                <!-- Points Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                    <div class="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/40">
+                        <div class="font-bold text-rose-700 dark:text-rose-300 text-sm mb-1">
+                            <i class="fa-solid fa-handshake-angle mr-1"></i> ការធ្វើសកម្មភាពរួមគ្នា
+                        </div>
+                        <p class="text-xs text-slate-600 dark:text-slate-300">
+                            ធ្វើការរួមគ្នាជាក្រុម ក្នុងការផ្លាស់ប្តូរព័ត៌មាន គំនិត និងដំណោះស្រាយវិជ្ជមាន។
+                        </p>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/40">
+                        <div class="font-bold text-rose-700 dark:text-rose-300 text-sm mb-1">
+                            <i class="fa-solid fa-globe mr-1"></i> ភាពជាពលរដ្ឋឌីជីថល
+                        </div>
+                        <p class="text-xs text-slate-600 dark:text-slate-300">
+                            ក្លាយជាពលរដ្ឋឌីជីថលដែលមានការទទួលខុសត្រូវ គោរពសិទ្ធិអ្នកដទៃ និងបង្កើតបរិយាកាសអនឡាញល្អប្រសើរ។
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Conclusion Badge -->
+            <div class="p-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white flex items-center justify-between">
+                <div>
+                    <h4 class="font-bold text-sm">សរុបសេចក្តី</h4>
+                    <p class="text-xs text-indigo-100">ធាតុទាំង ៥ ប្រកៀកស្មាគ្នាក្នុងការកសាងសមត្ថភាពអក្ខរកម្មឌីជីថលពេញលេញ។</p>
+                </div>
+                <button onclick="changeSlide(0)" class="px-3 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-xs font-semibold backdrop-blur-sm transition">
+                    សារឡើងវិញ <i class="fa-solid fa-rotate-right ml-1"></i>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Presentation Navigation Bar -->
+    <footer class="w-full px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-30">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            
+            <!-- Previous Button -->
+            <button id="prev-btn" onclick="prevSlide()" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-2 text-sm font-semibold">
+                <i class="fa-solid fa-chevron-left"></i>
+                <span class="hidden sm:inline">ថយក្រោយ</span>
+            </button>
+
+            <!-- Progress Bar Indicator -->
+            <div class="flex-1 max-w-md mx-6">
+                <div class="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="bg-indigo-600 h-full w-1/6 transition-all duration-300 ease-out"></div>
+                </div>
+            </div>
+
+            <!-- Next Button -->
+            <button id="next-btn" onclick="nextSlide()" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-600/20 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-2 text-sm font-semibold">
+                <span class="hidden sm:inline">បន្ទាប់</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
+    </footer>
+
+    <!-- Slide Table of Contents Modal Drawer -->
+    <div id="toc-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex justify-end">
+        <div class="w-full max-w-xs bg-white dark:bg-slate-900 h-full p-6 shadow-2xl flex flex-col justify-between transform translate-x-full transition-transform duration-300 ease-in-out" id="toc-drawer">
+            <div>
+                <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-800">
+                    <h3 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-book text-indigo-500"></i> មាតិកាស្លាយ
+                    </h3>
+                    <button id="close-toc" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <nav class="space-y-2">
+                    <button onclick="jumpToSlide(0)" class="toc-item w-full text-left p-3 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-3 transition">
+                        <span class="w-6 h-6 rounded-md bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-xs">0</span>
+                        <span>ទំព័រដើម / ធាតុទាំង ៥</span>
+                    </button>
+                    <button onclick="jumpToSlide(1)" class="toc-item w-full text-left p-3 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-3 transition">
+                        <span class="w-6 h-6 rounded-md bg-blue-100 dark:bg-blue-900/50 text-blue-600 flex items-center justify-center text-xs">១</span>
+                        <span>១. ការចេះប្រើប្រាស់</span>
+                    </button>
+                    <button onclick="jumpToSlide(2)" class="toc-item w-full text-left p-3 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-3 transition">
+                        <span class="w-6 h-6 rounded-md bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 flex items-center justify-center text-xs">២</span>
+                        <span>២. ការវិភាគ</span>
+                    </button>
+                    <button onclick="jumpToSlide(3)" class="toc-item w-full text-left p-3 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-3 transition">
+                        <span class="w-6 h-6 rounded-md bg-amber-100 dark:bg-amber-900/50 text-amber-600 flex items-center justify-center text-xs">៣</span>
+                        <span>៣. ការបង្កើត</span>
+                    </button>
+                    <button onclick="jumpToSlide(4)" class="toc-item w-full text-left p-3 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-3 transition">
+                        <span class="w-6 h-6 rounded-md bg-purple-100 dark:bg-purple-900/50 text-purple-600 flex items-center justify-center text-xs">៤</span>
+                        <span>៤. ការឆ្លុះបញ្ចាំង</span>
+                    </button>
+                    <button onclick="jumpToSlide(5)" class="toc-item w-full text-left p-3 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-3 transition">
+                        <span class="w-6 h-6 rounded-md bg-rose-100 dark:bg-rose-900/50 text-rose-600 flex items-center justify-center text-xs">៥</span>
+                        <span>៥. ការចូលរួម</span>
+                    </button>
+                </nav>
+            </div>
+
+            <div class="text-xs text-slate-400 text-center pt-4 border-t border-slate-200 dark:border-slate-800">
+                ចុចគ្រាប់ចុច ⬅️ ➡️ ដើម្បីផ្លាស់ប្តូរស្លាយ
+            </div>
+        </div>
+    </div>
+
+    <!-- Presentation Logic JavaScript -->
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        const currentBadge = document.getElementById('current-slide-badge');
+        const totalBadge = document.getElementById('total-slides-badge');
+        const progressBar = document.getElementById('progress-bar');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        // Initialize display stats
+        totalBadge.textContent = String(totalSlides).padStart(2, '0');
+
+        function updateSlideUI() {
+            slides.forEach((slide, idx) => {
+                if (idx === currentSlide) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            // Update badge numbers
+            currentBadge.textContent = String(currentSlide + 1).padStart(2, '0');
+
+            // Update Progress Bar
+            const progressPercent = ((currentSlide + 1) / totalSlides) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+
+            // Navigation button disabled state
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+
+            // Update Table of Content Active Items
+            const tocItems = document.querySelectorAll('.toc-item');
+            tocItems.forEach((item, idx) => {
+                if (idx === currentSlide) {
+                    item.classList.add('bg-indigo-50', 'dark:bg-indigo-950/50', 'text-indigo-600', 'font-bold');
+                } else {
+                    item.classList.remove('bg-indigo-50', 'dark:bg-indigo-950/50', 'text-indigo-600', 'font-bold');
+                }
+            });
+        }
+
+        function changeSlide(index) {
+            if (index >= 0 && index < totalSlides) {
+                currentSlide = index;
+                updateSlideUI();
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlideUI();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlideUI();
+            }
+        }
+
+        function jumpToSlide(index) {
+            changeSlide(index);
+            closeTOCModal();
+        }
+
+        // Keyboard Navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'Space') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            } else if (e.key === 'Escape') {
+                closeTOCModal();
+            }
+        });
+
+        // Dark/Light Theme Switching
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+
+        themeToggleBtn.addEventListener('click', () => {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            } else {
+                html.classList.remove('light');
+                html.classList.add('dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
+        });
+
+        // TOC Drawer Controls
+        const tocBtn = document.getElementById('toc-btn');
+        const closeTocBtn = document.getElementById('close-toc');
+        const tocModal = document.getElementById('toc-modal');
+        const tocDrawer = document.getElementById('toc-drawer');
+
+        function openTOCModal() {
+            tocModal.classList.remove('opacity-0', 'pointer-events-none');
+            tocDrawer.classList.remove('translate-x-full');
+        }
+
+        function closeTOCModal() {
+            tocModal.classList.add('opacity-0', 'pointer-events-none');
+            tocDrawer.classList.add('translate-x-full');
+        }
+
+        tocBtn.addEventListener('click', openTOCModal);
+        closeTocBtn.addEventListener('click', closeTOCModal);
+        tocModal.addEventListener('click', (e) => {
+            if (e.target === tocModal) closeTOCModal();
+        });
+
+        // Fullscreen Toggle
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        fullscreenBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log(err));
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        });
+
+        // Touch Swipe Gesture Handling
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, false);
+
+        function handleSwipe() {
+            const threshold = 50;
+            if (touchEndX < touchStartX - threshold) {
+                nextSlide();
+            }
+            if (touchEndX > touchStartX + threshold) {
+                prevSlide();
+            }
+        }
+
+        // Initialize UI on load
+        updateSlideUI();
+    </script>
+</body>
+</html>
